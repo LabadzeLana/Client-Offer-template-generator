@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commercial Offer One-Pager Generator — GeoLab</title>
+<meta name="description" content="GeoLab — The art of using AI: კომერციული შეთავაზების გენერატორი.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8FAFC;--paper:#FFFFFF;--text:#0F172A;--muted:#475569;--line:#E2E8F0;
+  --accent:#2563EB;--accent-soft:#EFF4FF;--danger:#DC2626;
+  --font:"Inter","Noto Sans Georgian",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;font-size:14px}
+button,input,textarea,select{font:inherit;color:inherit}
+
+/* Top bar */
+.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:16px;padding:12px 28px;background:rgba(255,255,255,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.brand-dot{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2563EB,#6366F1);display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px}
+.brand h1{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.brand span{font-size:12px;color:var(--muted)}
+.seg{display:flex;background:#F1F5F9;border-radius:10px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--muted);font-weight:500;transition:.2s}
+.seg button.active{background:#fff;color:var(--text);box-shadow:0 1px 2px rgba(15,23,42,.08)}
+.btn{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:500;font-size:13px;transition:.2s}
+.btn:hover{border-color:#CBD5E1;background:#F8FAFC}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 1px 2px rgba(37,99,235,.3)}
+.btn-primary:hover{background:#1D4ED8;border-color:#1D4ED8;transform:translateY(-1px)}
+
+/* Layout */
+.workspace{display:grid;grid-template-columns:40% 60%;min-height:calc(100vh - 57px)}
+.editor{padding:28px;display:flex;flex-direction:column;gap:18px;border-right:1px solid var(--line);overflow:auto;max-height:calc(100vh - 57px)}
+.preview{padding:36px;overflow:auto;max-height:calc(100vh - 57px);display:flex;justify-content:center}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;animation:rise .4s ease both}
+.card h2{font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card h2 .num{width:20px;height:20px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-size:11px;display:grid;place-items:center}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+label{font-size:12px;color:var(--muted);font-weight:500}
+input,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+textarea{resize:vertical;min-height:84px;line-height:1.5}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.item{display:grid;grid-template-columns:1fr 70px 100px 30px;gap:8px;align-items:end;padding:12px 0;border-top:1px dashed var(--line);animation:rise .3s ease both}
+.item:first-of-type{border-top:0;padding-top:0}
+.item .sub{grid-column:1/-1;font-size:12px;color:var(--muted);text-align:right;margin-top:-2px}
+.icon-btn{width:30px;height:38px;border:0;background:transparent;border-radius:8px;cursor:pointer;color:#94A3B8;font-size:18px;transition:.2s}
+.icon-btn:hover:not(:disabled){background:#FEF2F2;color:var(--danger)}
+.icon-btn:disabled{opacity:.3;cursor:not-allowed}
+.add{margin-top:12px;width:100%;border:1px dashed #CBD5E1;background:#F8FAFC;color:var(--accent);padding:10px;border-radius:10px;cursor:pointer;font-weight:500;transition:.2s}
+.add:hover{background:var(--accent-soft);border-color:var(--accent)}
+
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* A4 Paper */
+.paper{width:210mm;min-height:297mm;background:var(--paper);box-shadow:0 1px 2px rgba(15,23,42,.06),0 1px 3px rgba(15,23,42,.05);border-radius:4px;padding:18mm 18mm 14mm;display:flex;flex-direction:column;flex-shrink:0;transform-origin:top center}
+.doc-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.doc-logo{display:flex;align-items:center;gap:12px}
+.doc-logo img{height:44px;width:auto;object-fit:contain}
+.doc-logo .org{font-weight:700;font-size:18px;letter-spacing:-.02em}
+.doc-logo .org small{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0}
+.meta{text-align:right;font-size:11px;color:var(--muted);line-height:1.7}
+.meta b{color:var(--text);font-weight:600}
+.doc-title{margin-top:26px}
+.eyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.doc-title h2{color:#DC2626;font-size:30px;font-weight:700;letter-spacing:-.03em;margin-top:6px;line-height:1.15}
+.intro{margin-top:16px;padding:14px 16px;border-left:2px solid var(--accent);background:linear-gradient(90deg,#F5F8FF,#fff);font-size:12px;line-height:1.7;color:var(--muted);border-radius:0 8px 8px 0}
+.section{margin-top:26px}
+.section-label{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#94A3B8;font-weight:600;margin-bottom:8px}
+.client-name{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.client-desc{margin-top:6px;font-size:12.5px;line-height:1.7;color:var(--muted);white-space:pre-wrap}
+.placeholder{color:#CBD5E1}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;font-weight:600;font-size:10.5px;color:var(--muted);padding:9px 10px;background:#F8FAFC;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.idx{color:#94A3B8;width:28px}
+.total{display:flex;justify-content:flex-end;margin-top:16px}
+.total-box{min-width:240px;background:var(--accent-soft);border:1px solid #DBE6FE;border-radius:10px;padding:14px 18px;display:flex;justify-content:space-between;align-items:baseline;gap:24px}
+.total-box span{font-size:12px;color:var(--accent);font-weight:600}
+.total-box strong{font-size:22px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.doc-foot{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:10.5px;color:#94A3B8}
+
+@media (max-width:1100px){
+  .workspace{grid-template-columns:1fr}
+  .editor,.preview{max-height:none}
+  .paper{zoom:.75}
+}
+
+/* Print */
+@page{size:A4;margin:0}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff}
+  .topbar,.editor{display:none!important}
+  .workspace{display:block;min-height:0}
+  .preview{padding:0;max-height:none;overflow:visible;display:block}
+  .paper{box-shadow:none;border-radius:0;width:210mm;height:297mm;min-height:0;overflow:hidden;zoom:1;page-break-after:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-dot">G</div>
+    <div><h1>Commercial Offer One-Pager Generator</h1><span>GeoLab · The art of using AI</span></div>
+  </div>
+  <div class="seg" id="currency" role="group" aria-label="ვალუტა">
+    <button id="cur-gel" data-c="GEL" class="active">₾ GEL</button>
+    <button id="cur-usd" data-c="USD">$ USD</button>
+    <button id="cur-eur" data-c="EUR">€ EUR</button>
+  </div>
+  <button class="btn" id="reset-btn">გასუფთავება</button>
+  <button class="btn btn-primary" id="print-btn">PDF-ად შენახვა / ბეჭდვა</button>
+</header>
+
+<main class="workspace">
+  <section class="editor" aria-label="რედაქტორი">
+    <div class="card">
+      <h2><span class="num">1</span>შეთავაზების დეტალები</h2>
+      <div class="row2">
+        <div class="field"><label for="offer-date">თარიღი</label><input type="date" id="offer-date"></div>
+        <div class="field"><label for="offer-id">შეთავაზების ID</label><input id="offer-id"></div>
+      </div>
+    </div>
+    <div class="card" style="animation-delay:.05s">
+      <h2><span class="num">2</span>კლიენტის ინფორმაცია</h2>
+      <div class="field"><label for="client-name">კლიენტი ორგანიზაციის სახელი</label><input id="client-name" placeholder="მაგ: შპს „ინოვაცია“"></div>
+      <div class="field"><label for="client-desc">მოკლე აღწერა / მიზანი</label><textarea id="client-desc" placeholder="შეთავაზების კონტექსტი და მიზანი..."></textarea></div>
+    </div>
+    <div class="card" style="animation-delay:.1s">
+      <h2><span class="num">3</span>პროდუქტები / სერვისები</h2>
+      <div id="items"></div>
+      <button class="add" id="add-item">+ პოზიციის დამატება</button>
+    </div>
+  </section>
+
+  <section class="preview" aria-label="გადახედვა">
+    <article class="paper" id="paper">
+      <div class="doc-head">
+        <div class="doc-logo">
+          <img src="./logo.png" alt="The art of using AI logo">
+          <div class="org">GeoLab<small>საგანმანათლებლო პროგრამა</small></div>
+        </div>
+        <div class="meta">
+          <div>კომერციული შეთავაზება</div>
+          <div>ID: <b id="p-id"></b></div>
+          <div>თარიღი: <b id="p-date"></b></div>
+        </div>
+      </div>
+
+      <div class="doc-title">
+        <div class="eyebrow">პროგრამა</div>
+        <h2>The art of using AI</h2>
+        <p class="intro">ეს არის შერჩეული საგანმანათლებლო პროგრამა ადამიანის შემოქმედებისა და ხელოვნური ინტელექტის გზაჯვარედინზე, შექმნილი ცნობისმოყვარე ადამიანებისთვის, რომლებიც მზად არიან მომავლის შესაქმნელად.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">კლიენტი</div>
+        <div class="client-name" id="p-client"></div>
+        <p class="client-desc" id="p-desc"></p>
+      </div>
+
+      <div class="section">
+        <div class="section-label">შეთავაზების დეტალები</div>
+        <table>
+          <thead><tr><th>#</th><th>პროდუქტი / სერვისი</th><th class="r">რაოდენობა</th><th class="r">ერთეულის ფასი</th><th class="r">ჯამი</th></tr></thead>
+          <tbody id="p-rows"></tbody>
+        </table>
+        <div class="total"><div class="total-box"><span>სულ ჯამი</span><strong id="p-total"></strong></div></div>
+      </div>
+
+      <div class="doc-foot"><span>GeoLab · The art of using AI</span><span id="p-foot-id"></span></div>
+    </article>
+  </section>
+</main>
+
+<script>
+const SYM={GEL:'₾',USD:'$',EUR:'€'};
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+const genId=()=>{const y=new Date().getFullYear();const n=(+localStorage.getItem('offerSeq')||0)+1;localStorage.setItem('offerSeq',n);return `OFF-${y}-${String(n).padStart(3,'0')}`};
+const blankItem=()=>({name:'',qty:1,price:0});
+let state;
+const fresh=()=>({currency:'GEL',date:today(),id:genId(),client:'',desc:'',items:[blankItem()]});
+
+const fmt=v=>`${SYM[state.currency]} ${v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+const fmtDate=d=>{if(!d)return'—';const [y,m,dd]=d.split('-');return `${dd}.${m}.${y}`};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function renderItems(){
+  $('items').innerHTML=state.items.map((it,i)=>`
+    <div class="item" data-i="${i}">
+      <div class="field"><label for="n${i}">პროდუქტის / სერვისის სახელი</label><input id="n${i}" data-k="name" value="${esc(it.name)}" placeholder="მაგ: AI ვორქშოპი"></div>
+      <div class="field"><label for="q${i}">რაოდენობა</label><input id="q${i}" data-k="qty" type="number" min="1" step="1" value="${it.qty}"></div>
+      <div class="field"><label for="p${i}">ერთეულის ფასი</label><input id="p${i}" data-k="price" type="number" min="0" step="0.01" value="${it.price||''}" placeholder="0.00"></div>
+      <button class="icon-btn" data-del="${i}" aria-label="წაშლა" ${state.items.length===1?'disabled':''}>×</button>
+      <div class="sub" id="sub${i}"></div>
+    </div>`).join('');
+}
+
+function renderPreview(){
+  $('p-id').textContent=$('p-foot-id').textContent=state.id;
+  $('p-date').textContent=fmtDate(state.date);
+  $('p-client').innerHTML=state.client?esc(state.client):'<span class="placeholder">კლიენტი ორგანიზაციის სახელი</span>';
+  $('p-desc').innerHTML=state.desc?esc(state.desc):'<span class="placeholder">მოკლე აღწერა / მიზანი</span>';
+  let total=0;
+  $('p-rows').innerHTML=state.items.map((it,i)=>{
+    const sub=it.qty*it.price;total+=sub;
+    const s=$('sub'+i);if(s)s.textContent=`ჯამი: ${fmt(sub)}`;
+    return `<tr><td class="idx">${i+1}</td><td>${it.name?esc(it.name):'<span class="placeholder">—</span>'}</td><td class="r">${it.qty}</td><td class="r">${fmt(it.price)}</td><td class="r"><b>${fmt(sub)}</b></td></tr>`;
+  }).join('');
+  $('p-total').textContent=fmt(total);
+  localStorage.setItem('offerState',JSON.stringify(state));
+}
+
+function syncForm(){
+  $('offer-date').value=state.date;$('offer-id').value=state.id;
+  $('client-name').value=state.client;$('client-desc').value=state.desc;
+  document.querySelectorAll('#currency button').forEach(b=>b.classList.toggle('active',b.dataset.c===state.currency));
+  renderItems();renderPreview();
+}
+
+$('offer-date').oninput=e=>{state.date=e.target.value;renderPreview()};
+$('offer-id').oninput=e=>{state.id=e.target.value;renderPreview()};
+$('client-name').oninput=e=>{state.client=e.target.value;renderPreview()};
+$('client-desc').oninput=e=>{state.desc=e.target.value;renderPreview()};
+$('items').addEventListener('input',e=>{
+  const i=+e.target.closest('.item').dataset.i,k=e.target.dataset.k;if(!k)return;
+  let v=e.target.value;
+  if(k==='qty')v=Math.max(1,parseInt(v)||1);
+  if(k==='price')v=Math.max(0,parseFloat(v)||0);
+  state.items[i][k]=v;renderPreview();
+});
+$('items').addEventListener('change',e=>{if(e.target.dataset.k==='qty')e.target.value=state.items[+e.target.closest('.item').dataset.i].qty});
+$('items').addEventListener('click',e=>{
+  const d=e.target.closest('[data-del]');if(!d||state.items.length===1)return;
+  state.items.splice(+d.dataset.del,1);renderItems();renderPreview();
+});
+$('add-item').onclick=()=>{state.items.push(blankItem());renderItems();renderPreview();$('n'+(state.items.length-1)).focus()};
+$('currency').onclick=e=>{const b=e.target.closest('button');if(!b)return;state.currency=b.dataset.c;syncForm()};
+$('reset-btn').onclick=()=>{if(confirm('ნამდვილად გსურთ ფორმის გასუფთავება?')){state=fresh();syncForm()}};
+$('print-btn').onclick=()=>window.print();
+
+try{state=JSON.parse(localStorage.getItem('offerState'))}catch{}
+if(!state||!state.items)state=fresh();
+syncForm();
+</script>
+</body>
+</html>
